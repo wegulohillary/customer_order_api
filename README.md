@@ -47,12 +47,12 @@ cd customer-order-api
 
 ---
 
-2. Create and Configure .env File
-
+### 2. Create and Configure .env File
+```bash
 cp .env.sample .env
 
 Then edit .env:
-
+```Env
 DEBUG=True
 SECRET_KEY=your-secret-key
 DB_NAME=orders_db
@@ -66,14 +66,16 @@ AT_API_KEY=your_africas_talking_sandbox_key
 
 ---
 
-3. Set Up PostgreSQL Database
+### 3. Set Up PostgreSQL Database
 
 Option 1: Using Docker (Recommended)
 
+```bash
 docker-compose up --build
 
 Option 2: Manually on Linux
 
+```bash
 sudo -u postgres psql
 
 CREATE DATABASE orders_db;
@@ -86,8 +88,9 @@ GRANT ALL PRIVILEGES ON DATABASE orders_db TO orders_user;
 
 ---
 
-4. Migrate and Start Server
+### 4. Migrate and Start Server
 
+```bash
 python manage.py migrate
 python manage.py runserver
 
@@ -101,7 +104,7 @@ Swagger docs: http://127.0.0.1:8000/swagger/
 
 ---
 
-Authentication with OpenID Connect (OIDC)
+## Authentication with OpenID Connect (OIDC)
 
 1. Register your app with an OIDC provider (e.g., Google, Auth0, Keycloak).
 
@@ -113,6 +116,7 @@ pip install mozilla-django-oidc
 
 3. Update your settings.py with:
 
+```Python
 INSTALLED_APPS += ['mozilla_django_oidc']
 
 AUTHENTICATION_BACKENDS = (
@@ -136,7 +140,7 @@ LOGIN_REDIRECT_URL = '/'
 
 ---
 
-SMS Alerts via Africa’s Talking
+## SMS Alerts via Africa’s Talking
 
 1. Sign up at Africa’s Talking
 
@@ -145,7 +149,7 @@ SMS Alerts via Africa’s Talking
 
 
 3. Add them to your .env file:
-
+```Env
 AT_USERNAME=sandbox
 AT_API_KEY=your_api_key
 
@@ -157,19 +161,21 @@ AT_API_KEY=your_api_key
 
 ---
 
-Running Tests
+## Running Tests
 
+```bash
 pytest
 
 To check code coverage:
 
+```bash
 coverage run -m pytest
 coverage report -m
 
 
 ---
 
-GitHub Actions - CI/CD
+## GitHub Actions - CI/CD
 
 GitHub Actions is configured via .github/workflows/ci.yml:
 
@@ -183,39 +189,45 @@ Installs dependencies and runs tests
 
 ---
 
-Deploying to Heroku
+## Deploying to Heroku
+
 
 1. Create Heroku App
 
+```bash
 heroku create customer-order-api
 
 2. Add PostgreSQL Addon
 
+```bash
 heroku addons:create heroku-postgresql:hobby-dev
 
 3. Push Your Code
 
+```bash
 git push heroku main
 
 4. Set Heroku Environment Variables
 
+```Env
 heroku config:set SECRET_KEY='your-secret-key'
 heroku config:set AT_USERNAME='sandbox'
 heroku config:set AT_API_KEY='your_api_key'
 
 5. Run Migrations
 
+```bash
 heroku run python manage.py migrate
 
 
 ---
 
-API Endpoints
+## API Endpoints
 
 
 ---
 
-Contributor
+## Contributor
 
 Okumu Hillary
 Email: wegulohillary@gmail.com
@@ -224,7 +236,7 @@ Role: Backend Developer
 
 ---
 
-License
+## License
 
 MIT License
 
