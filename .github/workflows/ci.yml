@@ -1,32 +1,72 @@
 name: Django CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
     services:
       postgres:
-        image: postgres
+        image: postgres:14
         env:
-          POSTGRES_DB: orders_db
-          POSTGRES_USER: orders_user
-          POSTGRES_PASSWORD: securepassword
+          POSTGRES_DB: customer_order_db
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
         ports:
-          - "5432:5432"
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DEBUG: False
+      SECRET_KEY: testsecret
+      DB_NAME: customer_order_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DJANGO_SETTINGS_MODULE: customer_order_api.settings
+      AFRICASTALKING_USERNAME: sandbox
+      AFRICASTALKING_API_KEY: testapikey
+      OIDC_RP_CLIENT_ID: testclientid
+      OIDC_RP_CLIENT_SECRET: testsecret
+      OIDC_OP_AUTHORIZATION_ENDPOINT: https://example.com/auth
+      OIDC_OP_TOKEN_ENDPOINT: https://example.com/token
+      OIDC_OP_USER_ENDPOINT: https://example.com/userinfo
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.10'
+    - name: Checkout Code
+      uses: actions/checkout@v3
 
-    - name: Install dependencies
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install Dependencies
       run: |
+        python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run tests
+    - name: Wait for Postgres
       run: |
-        python manage.py migrate
-        pytest
+        until pg_isready -h 127.0.0.1 -p 5432 -U postgres; do
+          echo "Waiting for PostgreSQL..."
+          sleep 2
+        done
+
+    - name: Run Migrations
+      run: python manage.py migrate
+
+    - name: Run Tests with Coverage
+      run: |
+        coverage run -m pytest
+        coverage report
