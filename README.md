@@ -41,7 +41,7 @@
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/customer-order-api.git
+git clone https://github.com/wegulohillary/customer-order-api.git
 cd customer-order-api
 ```
 
